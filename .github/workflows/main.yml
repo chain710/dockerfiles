@@ -35,7 +35,8 @@ jobs:
           echo "Dockerfile not found at given path"
           exit 1
         fi
-        echo "::set-output name=image::${${{ github.event.inputs.context }}//\//-}"
+        context="${{ github.event.inputs.context }}"
+        echo "::set-output name=image::${context//\//-}"
 
     - name: build torch image
       uses: docker/build-push-action@v2
