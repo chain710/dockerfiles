@@ -31,7 +31,7 @@ jobs:
     - name: Validate dockerfile path
       id: dockerfile_dir
       run: |
-        if [ ! -f "${{ github.workspace }}/${{ github.event.inputs.context }}/Dockerfile ]; then
+        if [ ! -f "${{ github.event.inputs.context }}/Dockerfile" ]; then
           echo "Dockerfile not found at given path"
           exit 1
         fi
