@@ -3,8 +3,8 @@ name: Build and Push Docker Image
 on:
   workflow_dispatch:
     inputs:
-      dockerfile:
-        description: 'which dockerfile to build'
+      context:
+        description: 'which context to build'
         required: true
       tagname:
           description: 'tag name'
@@ -31,19 +31,17 @@ jobs:
     - name: Validate dockerfile path
       id: dockerfile_dir
       run: |
-        if [ ! -f "${{ github.workspace }}/${{ github.event.inputs.dockerfile }}" ]; then
+        if [ ! -f "${{ github.workspace }}/${{ github.event.inputs.context }}/Dockerfile ]; then
           echo "Dockerfile not found at given path"
           exit 1
         fi
-        context=$(dirname "${{ github.event.inputs.dockerfile }}")
-        echo "::set-output name=context::$context"
-        echo "::set-output name=image::${context//\//-}"
+        echo "::set-output name=image::${${{ github.event.inputs.context }}//\//-}"
 
     - name: build torch image
       uses: docker/build-push-action@v2
       with:
-        context: ${{ steps.dockerfile_dir.outputs.context }}
-        file: ${{ github.event.inputs.dockerfile }}
+        context: ${{ github.event.inputs.context }}
+        file: ${{ github.event.inputs.context }}/Dockerfile
         tags: |
           ghcr.io/${{ github.repository_owner }}/${{ steps.dockerfile_dir.outputs.image }}:${{ github.event.inputs.tagname }}
         push: true
